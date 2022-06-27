@@ -1,11 +1,9 @@
 <?php
 
-namespace AgDevelop\JobSupervisor\Fork;
+namespace AgDevelop\ForkingSupervisor\Fork;
 
-use AgDevelop\JobSupervisor\Exception\ForkFailedException;
-use AgDevelop\JobSupervisor\Exception\JobException;
-use AgDevelop\JobSupervisor\Job\JobInterface;
-use AgDevelop\JobSupervisor\Watchdog\WatchdogInterface;
+use AgDevelop\ForkingSupervisor\Job\JobInterface;
+use AgDevelop\ForkingSupervisor\Watchdog\WatchdogInterface;
 
 class Fork
 {

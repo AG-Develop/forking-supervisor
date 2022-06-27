@@ -1,6 +1,6 @@
 <?php
 
-namespace AgDevelop\JobSupervisor\Job;
+namespace AgDevelop\ForkingSupervisor\Job;
 
 interface JobBuilderInterface
 {

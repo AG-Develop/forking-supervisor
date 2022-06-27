@@ -1,8 +1,8 @@
 <?php
 
-namespace AgDevelop\JobSupervisor\Job;
+namespace AgDevelop\ForkingSupervisor\Job;
 
-use AgDevelop\JobSupervisor\Exception\JobException;
+use AgDevelop\ForkingSupervisor\Exception\JobException;
 
 abstract class Job implements JobInterface
 {

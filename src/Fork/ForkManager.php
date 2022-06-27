@@ -1,12 +1,12 @@
 <?php
 
-namespace AgDevelop\JobSupervisor\Fork;
+namespace AgDevelop\ForkingSupervisor\Fork;
 
-use AgDevelop\JobSupervisor\Exception\ForkFailedException;
-use AgDevelop\JobSupervisor\Exception\ForkNotFoundException;
-use AgDevelop\JobSupervisor\Job\JobInterface;
-use AgDevelop\JobSupervisor\Job\JobBuilderInterface;
-use AgDevelop\JobSupervisor\Watchdog\WatchdogBuilderInterface;
+use AgDevelop\ForkingSupervisor\Exception\ForkFailedException;
+use AgDevelop\ForkingSupervisor\Exception\ForkNotFoundException;
+use AgDevelop\ForkingSupervisor\Job\JobInterface;
+use AgDevelop\ForkingSupervisor\Job\JobBuilderInterface;
+use AgDevelop\ForkingSupervisor\Watchdog\WatchdogBuilderInterface;
 use Psr\Log\LoggerInterface;
 
 class ForkManager

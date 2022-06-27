@@ -1,6 +1,6 @@
 <?php
 
-namespace AgDevelop\JobSupervisor;
+namespace AgDevelop\ForkingSupervisor;
 
 use Monolog\Handler\StreamHandler;
 use Monolog\Level;

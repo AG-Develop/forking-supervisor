@@ -1,5 +1,5 @@
 {
-    "name": "ag-develop/job-supervisor",
+    "name": "ag-develop/forking-supervisor",
     "type": "library",
     "minimum-stability": "dev",
     "autoload": {

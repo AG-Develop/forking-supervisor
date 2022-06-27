@@ -1,6 +1,6 @@
 <?php
 
-namespace AgDevelop\JobSupervisor\Watchdog;
+namespace AgDevelop\ForkingSupervisor\Watchdog;
 
 class Watchdog implements WatchdogInterface
 {

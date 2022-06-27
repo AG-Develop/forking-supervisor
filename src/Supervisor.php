@@ -1,13 +1,8 @@
 <?php
 
-namespace AgDevelop\JobSupervisor;
+namespace AgDevelop\ForkingSupervisor;
 
-use AgDevelop\JobSupervisor\Job\JobBuilder;
-use AgDevelop\JobSupervisor\Job\JobBuilderInterface;
-use AgDevelop\JobSupervisor\Fork\Fork;
-use AgDevelop\JobSupervisor\Fork\ForkManager;
-use AgDevelop\JobSupervisor\Fork\ForkBuilder;
-use AgDevelop\JobSupervisor\Fork\ForkBuilderInterface;
+use AgDevelop\ForkingSupervisor\Fork\ForkManager;
 use Coff\Ticker\CallableTick;
 use Coff\Ticker\Ticker;
 use Coff\Ticker\Time;

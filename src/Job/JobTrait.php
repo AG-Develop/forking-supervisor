@@ -1,8 +1,8 @@
 <?php
 
-namespace AgDevelop\JobSupervisor\Job;
+namespace AgDevelop\ForkingSupervisor\Job;
 
-use AgDevelop\JobSupervisor\Watchdog\Watchdog;
+use AgDevelop\ForkingSupervisor\Watchdog\Watchdog;
 use Psr\Log\LoggerInterface;
 
 trait JobTrait

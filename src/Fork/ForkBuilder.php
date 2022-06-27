@@ -1,13 +1,12 @@
 <?php
 
-namespace AgDevelop\JobSupervisor\Fork;
+namespace AgDevelop\ForkingSupervisor\Fork;
 
-use AgDevelop\JobSupervisor\Exception\ForkFailedException;
-use AgDevelop\JobSupervisor\Exception\JobException;
-use AgDevelop\JobSupervisor\Job\JobInterface;
-use AgDevelop\JobSupervisor\LoggerProviderInterface;
-use AgDevelop\JobSupervisor\Watchdog\WatchdogBuilder;
-use AgDevelop\JobSupervisor\Watchdog\WatchdogInterface;
+use AgDevelop\ForkingSupervisor\Exception\ForkFailedException;
+use AgDevelop\ForkingSupervisor\Exception\JobException;
+use AgDevelop\ForkingSupervisor\Job\JobInterface;
+use AgDevelop\ForkingSupervisor\LoggerProviderInterface;
+use AgDevelop\ForkingSupervisor\Watchdog\WatchdogInterface;
 
 class ForkBuilder implements ForkBuilderInterface
 {

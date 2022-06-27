@@ -1,8 +1,8 @@
 <?php
 
-namespace AgDevelop\JobSupervisor\Watchdog;
+namespace AgDevelop\ForkingSupervisor\Watchdog;
 
-use AgDevelop\JobSupervisor\Exception\WatchdogException;
+use AgDevelop\ForkingSupervisor\Exception\WatchdogException;
 
 class WatchdogBuilder implements WatchdogBuilderInterface
 {

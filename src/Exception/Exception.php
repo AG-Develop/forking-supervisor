@@ -1,6 +1,6 @@
 <?php
 
-namespace AgDevelop\JobSupervisor\Exception;
+namespace AgDevelop\ForkingSupervisor\Exception;
 
 class Exception extends \Exception
 {

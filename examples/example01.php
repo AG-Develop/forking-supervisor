@@ -2,15 +2,15 @@
 
 include (__DIR__ . "/../vendor/autoload.php");
 
-use AgDevelop\JobSupervisor\Exception\JobException;
-use AgDevelop\JobSupervisor\Job\JobInterface;
-use AgDevelop\JobSupervisor\Job\JobBuilder;
-use AgDevelop\JobSupervisor\Job\JobTrait;
-use AgDevelop\JobSupervisor\Fork\ForkBuilder;
-use AgDevelop\JobSupervisor\Fork\ForkManager;
-use AgDevelop\JobSupervisor\MonologLoggerProvider;
-use AgDevelop\JobSupervisor\Supervisor;
-use AgDevelop\JobSupervisor\Watchdog\WatchdogBuilder;
+use AgDevelop\ForkingSupervisor\Exception\JobException;
+use AgDevelop\ForkingSupervisor\Job\JobInterface;
+use AgDevelop\ForkingSupervisor\Job\JobBuilder;
+use AgDevelop\ForkingSupervisor\Job\JobTrait;
+use AgDevelop\ForkingSupervisor\Fork\ForkBuilder;
+use AgDevelop\ForkingSupervisor\Fork\ForkManager;
+use AgDevelop\ForkingSupervisor\MonologLoggerProvider;
+use AgDevelop\ForkingSupervisor\Supervisor;
+use AgDevelop\ForkingSupervisor\Watchdog\WatchdogBuilder;
 use Monolog\Handler\StreamHandler;
 use Monolog\Level;
 
