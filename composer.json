@@ -1,0 +1,25 @@
+{
+    "name": "ag-develop/job-supervisor",
+    "type": "library",
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "AgDevelop\\JobSupervisor\\": "src/"
+        }
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../../private/ticker"
+        }
+    ],
+    "require": {
+        "psr/log": "^3.0",
+        "coff/ticker": "dev-master",
+        "ext-pcntl": "*",
+        "ext-posix": "*"
+    },
+    "require-dev": {
+        "monolog/monolog": "*"
+    }
+}
