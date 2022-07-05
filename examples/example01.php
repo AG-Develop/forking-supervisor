@@ -18,6 +18,20 @@ $logger = new \Monolog\Logger('default');
 $handler = new StreamHandler('php://stderr', Level::Debug);
 $logger->pushHandler($handler);
 
+class CustomJobBuilder extends JobBuilder {
+    public function build(): JobInterface|null
+    {
+        $job = parent::build();
+
+        // simulate no job in queue
+        if (rand(0,5) == 3) {
+            return null;
+        }
+
+        return $job;
+    }
+}
+
 class ExampleJob implements JobInterface {
 
     use JobTrait;
@@ -35,7 +49,7 @@ class ExampleJob implements JobInterface {
             $this->getWatchdog()->setLastOccupied();
 
             if ($this->getWatchdog()->shouldExit()) {
-                $this->logger?->info(sprintf('Watchdog says we(%s) should die so goodbye oh cruel world.', $this->getJobId()));
+                $this->logger?->info(sprintf('Watchdog says we - job %s - should die so goodbye oh cruel world.', $this->getJobId()));
                 throw new JobException('suicide',2);
             }
         }
@@ -54,7 +68,7 @@ $manager = new ForkManager(
         maxAliveTime: 60,
     ),
     new ForkBuilder(new MonologLoggerProvider()),
-    new JobBuilder(ExampleJob::class),
+    new CustomJobBuilder(ExampleJob::class),
     $logger,
 );
 

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "220d1848ee235cd73db2032508daa540",
+    "content-hash": "59557ef634af9b9d551a5eafdbc56357",
     "packages": [
         {
             "name": "coff/ticker",
@@ -199,7 +199,10 @@
     },
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
+    "platform": {
+        "ext-pcntl": "*",
+        "ext-posix": "*"
+    },
     "platform-dev": [],
     "plugin-api-version": "2.2.0"
 }

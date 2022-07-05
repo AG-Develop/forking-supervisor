@@ -13,7 +13,7 @@ class Supervisor
     private Ticker $ticker;
 
     public function __construct(
-        private readonly ForkManager $processManager,
+        private readonly ForkManager $forkManager,
         protected readonly ?LoggerInterface $logger = null,
         private readonly int $refillSlotsInterval = 15,
         private readonly int $cleanupInterval = 60,
@@ -38,13 +38,13 @@ class Supervisor
 
     public function replenishSlots(): void {
         $this->logger->debug('Running replenish');
-        $this->processManager->vacateSlots();
-        $this->processManager->refillVacatedSlots();
+        $this->forkManager->vacateSlots();
+        $this->forkManager->refillVacatedSlots();
     }
 
     public function cleanup(): void {
         $this->logger->debug('Running cleanup');
-        $this->processManager->cleanSlots();
+        $this->forkManager->cleanSlots();
     }
 
     public function run()

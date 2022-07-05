@@ -110,6 +110,12 @@ class ForkManager
     {
         while ($this->count() < $this->slots) {
             $job = $this->jobBuilder->build();
+
+            if ($job === null) {
+                $this->logger?->info('JobBuilder returned no job. Skipping further refill');
+                return;
+            }
+
             $this->refillSlotWith($job);
         }
     }

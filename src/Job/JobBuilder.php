@@ -12,7 +12,7 @@ class JobBuilder implements JobBuilderInterface
 
     }
 
-    public function build(): JobInterface
+    public function build(): JobInterface|null
     {
         $job = new $this->jobClass;
         $job
