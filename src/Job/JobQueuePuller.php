@@ -2,7 +2,7 @@
 
 namespace AgDevelop\ForkingSupervisor\Job;
 
-class JobBuilder implements JobBuilderInterface
+class JobQueuePuller implements JobQueuePullerInterface
 {
     private int $jobId = 1;
 
@@ -12,7 +12,7 @@ class JobBuilder implements JobBuilderInterface
 
     }
 
-    public function build(): JobInterface|null
+    public function pull(): JobInterface|null
     {
         $job = new $this->jobClass;
         $job

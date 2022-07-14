@@ -5,8 +5,8 @@ namespace AgDevelop\ForkingSupervisor\Fork;
 use AgDevelop\ForkingSupervisor\Exception\ForkFailedException;
 use AgDevelop\ForkingSupervisor\Exception\JobException;
 use AgDevelop\ForkingSupervisor\Job\JobInterface;
-use AgDevelop\ForkingSupervisor\LoggerProviderInterface;
 use AgDevelop\ForkingSupervisor\Watchdog\WatchdogInterface;
+use AgDevelop\Interface\Logger\LoggerProviderInterface;
 
 class ForkBuilder implements ForkBuilderInterface
 {
@@ -30,8 +30,10 @@ class ForkBuilder implements ForkBuilderInterface
                 // we're child
                 try {
                     $job->setWatchdog($watchdog);
-                    $job->setLogger($this->loggerProvider->provide(
-                        forceNewInstance: true));
+
+                    // always provides new logger to forked process
+                    $job->setLogger($this->loggerProvider->getNewLogger());
+
                     $job->run();
                 } catch (JobException $e) {
                     exit($e->getReturnValue());

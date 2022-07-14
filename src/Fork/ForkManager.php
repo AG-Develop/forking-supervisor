@@ -5,7 +5,7 @@ namespace AgDevelop\ForkingSupervisor\Fork;
 use AgDevelop\ForkingSupervisor\Exception\ForkFailedException;
 use AgDevelop\ForkingSupervisor\Exception\ForkNotFoundException;
 use AgDevelop\ForkingSupervisor\Job\JobInterface;
-use AgDevelop\ForkingSupervisor\Job\JobBuilderInterface;
+use AgDevelop\ForkingSupervisor\Job\JobQueuePullerInterface;
 use AgDevelop\ForkingSupervisor\Watchdog\WatchdogBuilderInterface;
 use Psr\Log\LoggerInterface;
 
@@ -18,7 +18,7 @@ class ForkManager
         private int $slots,
         private WatchdogBuilderInterface $watchdogBuilder,
         private ForkBuilderInterface $forkBuilder,
-        private JobBuilderInterface $jobBuilder,
+        private JobQueuePullerInterface $jobQueue,
         private ?LoggerInterface $logger = null,
     ) {
 
@@ -109,10 +109,10 @@ class ForkManager
     public function refillVacatedSlots(): void
     {
         while ($this->count() < $this->slots) {
-            $job = $this->jobBuilder->build();
+            $job = $this->jobQueue->pull();
 
             if ($job === null) {
-                $this->logger?->info('JobBuilder returned no job. Skipping further refill');
+                $this->logger?->info('JobQueue returned no job. Skipping further refill');
                 return;
             }
 

@@ -4,7 +4,7 @@ include (__DIR__ . "/../vendor/autoload.php");
 
 use AgDevelop\ForkingSupervisor\Exception\JobException;
 use AgDevelop\ForkingSupervisor\Job\JobInterface;
-use AgDevelop\ForkingSupervisor\Job\JobBuilder;
+use AgDevelop\ForkingSupervisor\Job\JobQueuePuller;
 use AgDevelop\ForkingSupervisor\Job\JobTrait;
 use AgDevelop\ForkingSupervisor\Fork\ForkBuilder;
 use AgDevelop\ForkingSupervisor\Fork\ForkManager;
@@ -18,10 +18,10 @@ $logger = new \Monolog\Logger('default');
 $handler = new StreamHandler('php://stderr', Level::Debug);
 $logger->pushHandler($handler);
 
-class CustomJobBuilder extends JobBuilder {
-    public function build(): JobInterface|null
+class CustomJobQueue extends JobQueuePuller {
+    public function pull(): JobInterface|null
     {
-        $job = parent::build();
+        $job = parent::pull();
 
         // simulate no job in queue
         if (rand(0,5) == 3) {
@@ -68,7 +68,7 @@ $manager = new ForkManager(
         maxAliveTime: 60,
     ),
     new ForkBuilder(new MonologLoggerProvider()),
-    new CustomJobBuilder(ExampleJob::class),
+    new CustomJobQueue(ExampleJob::class),
     $logger,
 );
 
