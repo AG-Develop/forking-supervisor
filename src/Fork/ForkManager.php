@@ -119,6 +119,7 @@ class ForkManager
 
             if ($job === null) {
                 $this->logger?->info('JobQueue returned no job. Skipping further refill');
+
                 return;
             }
 
@@ -164,6 +165,7 @@ class ForkManager
         }
 
         $thread = $this->children[$pid];
+
         return $thread;
     }
 

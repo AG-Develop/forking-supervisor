@@ -8,14 +8,19 @@ use Psr\Log\LoggerInterface;
 trait JobTrait
 {
     private Watchdog $watchdog;
+
     private LoggerInterface $logger;
+
     private int $retries = 0;
+
     private bool $shouldRetryOnFail = true;
+
     private readonly string $jobId;
 
     public function setShouldRetryOnFail(bool $shouldRetryOnFail): self
     {
         $this->shouldRetryOnFail = $shouldRetryOnFail;
+
         return $this;
     }
 
@@ -46,6 +51,7 @@ trait JobTrait
     public function setWatchdog(Watchdog $watchdog): self
     {
         $this->watchdog = $watchdog;
+
         return $this;
     }
 

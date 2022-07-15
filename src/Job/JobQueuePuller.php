@@ -16,6 +16,7 @@ class JobQueuePuller implements JobQueuePullerInterface
         $job = new $this->jobClass;
         $job
             ->setJobId($this->jobId++);
+
         return $job;
     }
 }

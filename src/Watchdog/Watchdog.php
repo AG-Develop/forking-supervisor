@@ -10,6 +10,7 @@ use Exception;
 class Watchdog implements WatchdogInterface
 {
     private readonly DateTimeInterface $createdAt;
+
     protected DateTimeInterface $lastOccupied;
 
     public function __construct(
