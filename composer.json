@@ -7,10 +7,10 @@
             "AgDevelop\\ForkingSupervisor\\": "src/"
         }
     },
-    "repositories": [
+    "repositories" : [
         {
-            "type": "path",
-            "url": "../interfaces"
+            "type" : "vcs",
+            "url" : "https://github.com/ag-develop/interfaces"
         }
     ],
     "require": {
