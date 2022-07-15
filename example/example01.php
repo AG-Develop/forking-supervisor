@@ -9,7 +9,7 @@ use AgDevelop\ForkingSupervisor\Job\JobTrait;
 use AgDevelop\ForkingSupervisor\Fork\ForkBuilder;
 use AgDevelop\ForkingSupervisor\Fork\ForkManager;
 use AgDevelop\ForkingSupervisor\MonologLoggerProvider;
-use AgDevelop\ForkingSupervisor\Supervisor;
+use AgDevelop\ForkingSupervisor\ForkSupervisor;
 use AgDevelop\ForkingSupervisor\Watchdog\WatchdogBuilder;
 use Monolog\Handler\StreamHandler;
 use Monolog\Level;
@@ -72,7 +72,7 @@ $manager = new ForkManager(
     $logger,
 );
 
-$s = new Supervisor(
+$s = new ForkSupervisor(
     $manager,
     $logger
 );

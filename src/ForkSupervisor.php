@@ -8,7 +8,7 @@ use Coff\Ticker\Ticker;
 use Coff\Ticker\Time;
 use Psr\Log\LoggerInterface;
 
-class Supervisor
+class ForkSupervisor
 {
     private Ticker $ticker;
 

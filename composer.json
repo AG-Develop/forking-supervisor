@@ -10,10 +10,6 @@
     "repositories": [
         {
             "type": "path",
-            "url": "../../private/ticker"
-        },
-        {
-            "type": "path",
             "url": "../interfaces"
         }
     ],
