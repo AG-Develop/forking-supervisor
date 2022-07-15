@@ -11,11 +11,6 @@ interface JobInterface
     /**
      * @throws JobException
      */
-    public function interrupt(): void;
-
-    /**
-     * @throws JobException
-     */
     public function run(): void;
 
     public function setWatchdog(Watchdog $watchdog): self;
