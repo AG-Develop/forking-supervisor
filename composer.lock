@@ -4,15 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "090897113c81e6ae69e8f07e127f6bc3",
+    "content-hash": "e5c879e237ead418a4a22ff6892a309e",
     "packages": [
         {
             "name": "ag-develop/interfaces",
             "version": "dev-feature/basic-interfaces-defined",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/AG-Develop/interfaces.git",
+                "reference": "2b1c4b8e4f3a238114d91887507afb943f2bcde9"
+            },
             "dist": {
-                "type": "path",
-                "url": "../interfaces",
-                "reference": "2cb1bf717c52e165d4d8782672de77608a5b2d2b"
+                "type": "zip",
+                "url": "https://api.github.com/repos/AG-Develop/interfaces/zipball/2b1c4b8e4f3a238114d91887507afb943f2bcde9",
+                "reference": "2b1c4b8e4f3a238114d91887507afb943f2bcde9",
+                "shasum": ""
             },
             "require": {
                 "php": ">=8.0",
@@ -25,24 +31,37 @@
                 }
             },
             "description": "Basic interfaces catalog",
-            "transport-options": {
-                "relative": true
-            }
+            "support": {
+                "source": "https://github.com/AG-Develop/interfaces/tree/feature/basic-interfaces-defined",
+                "issues": "https://github.com/AG-Develop/interfaces/issues"
+            },
+            "time": "2022-07-15T12:56:32+00:00"
         },
         {
             "name": "coff/ticker",
             "version": "dev-master",
-            "dist": {
-                "type": "path",
-                "url": "../../private/ticker",
-                "reference": "811914e3339523fe7fe97d701713fff8651af7e1"
+            "source": {
+                "type": "git",
+                "url": "https://github.com/coff/ticker.git",
+                "reference": "1e323ad62d14c00b6454e94664eb204b2daa6482"
             },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/coff/ticker/zipball/1e323ad62d14c00b6454e94664eb204b2daa6482",
+                "reference": "1e323ad62d14c00b6454e94664eb204b2daa6482",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.1"
+            },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
                     "Coff\\Ticker\\": "src/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -53,9 +72,11 @@
                 }
             ],
             "description": "Clock based event dispatcher",
-            "transport-options": {
-                "relative": true
-            }
+            "support": {
+                "issues": "https://github.com/coff/ticker/issues",
+                "source": "https://github.com/coff/ticker/tree/v3.0.0-beta"
+            },
+            "time": "2022-07-15T11:49:21+00:00"
         },
         {
             "name": "psr/log",
