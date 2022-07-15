@@ -28,5 +28,4 @@ class Fork
     {
         return $this->watchdog;
     }
-
 }

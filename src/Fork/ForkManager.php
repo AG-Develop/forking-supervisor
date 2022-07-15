@@ -102,6 +102,30 @@ class ForkManager
         }
     }
 
+    private function count(): int
+    {
+        return count($this->children);
+    }
+
+    /**
+     * @throws ForkNotFoundException
+     */
+    private function get(int $pid): Fork
+    {
+        if (!isset($this->children[$pid])) {
+            throw new ForkNotFoundException('Unknown fork');
+        }
+
+        $thread = $this->children[$pid];
+
+        return $thread;
+    }
+
+    private function unlink(int $pid): void
+    {
+        unset($this->children[$pid]);
+    }
+
     /**
      * @throws ForkFailedException
      */
@@ -110,6 +134,11 @@ class ForkManager
         $this->logger?->info(sprintf('Spawning new fork for job %s', $job->getJobId()));
         $child = $this->forkBuilder->build($job, $this->watchdogBuilder->build());
         $this->add($child);
+    }
+
+    private function add(Fork $child): void
+    {
+        $this->children[$child->getPid()] = $child;
     }
 
     public function refillVacatedSlots(): void
@@ -148,34 +177,5 @@ class ForkManager
     {
         posix_kill($child->getPid(), SIGKILL);
         unset($this->children[$child->getPid()]);
-    }
-
-    private function add(Fork $child): void
-    {
-        $this->children[$child->getPid()] = $child;
-    }
-
-    /**
-     * @throws ForkNotFoundException
-     */
-    private function get(int $pid): Fork
-    {
-        if (!isset($this->children[$pid])) {
-            throw new ForkNotFoundException('Unknown fork');
-        }
-
-        $thread = $this->children[$pid];
-
-        return $thread;
-    }
-
-    private function unlink(int $pid): void
-    {
-        unset($this->children[$pid]);
-    }
-
-    private function count(): int
-    {
-        return count($this->children);
     }
 }

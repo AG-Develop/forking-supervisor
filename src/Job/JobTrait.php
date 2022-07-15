@@ -34,23 +34,9 @@ trait JobTrait
         $this->retries++;
     }
 
-    public function setJobId(string $id): self
-    {
-        $this->jobId = $id;
-
-        return $this;
-    }
-
     public function setLogger(LoggerInterface $logger): self
     {
         $this->logger = $logger;
-
-        return $this;
-    }
-
-    public function setWatchdog(Watchdog $watchdog): self
-    {
-        $this->watchdog = $watchdog;
 
         return $this;
     }
@@ -60,8 +46,22 @@ trait JobTrait
         return $this->jobId;
     }
 
+    public function setJobId(string $id): self
+    {
+        $this->jobId = $id;
+
+        return $this;
+    }
+
     public function getWatchdog(): Watchdog
     {
         return $this->watchdog;
+    }
+
+    public function setWatchdog(Watchdog $watchdog): self
+    {
+        $this->watchdog = $watchdog;
+
+        return $this;
     }
 }

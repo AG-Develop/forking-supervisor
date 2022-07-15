@@ -13,7 +13,7 @@ class JobQueuePuller implements JobQueuePullerInterface
 
     public function pull(): JobInterface|null
     {
-        $job = new $this->jobClass;
+        $job = new $this->jobClass();
         $job
             ->setJobId($this->jobId++);
 

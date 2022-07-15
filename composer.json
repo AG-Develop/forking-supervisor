@@ -1,26 +1,27 @@
 {
-    "name": "ag-develop/forking-supervisor",
-    "type": "library",
-    "minimum-stability": "dev",
-    "autoload": {
-        "psr-4": {
-            "AgDevelop\\ForkingSupervisor\\": "src/"
-        }
-    },
-    "repositories" : [
-        {
-            "type" : "vcs",
-            "url" : "https://github.com/ag-develop/interfaces"
-        }
-    ],
-    "require": {
-        "psr/log": "^3.0",
-        "coff/ticker": "dev-master",
-        "ag-develop/interfaces": "dev-feature/basic-interfaces-defined",
-        "ext-pcntl": "*",
-        "ext-posix": "*"
-    },
-    "require-dev": {
-        "monolog/monolog": "*"
+  "name": "ag-develop/forking-supervisor",
+  "type": "library",
+  "minimum-stability": "dev",
+  "autoload": {
+    "psr-4": {
+      "AgDevelop\\ForkingSupervisor\\": "src/"
     }
+  },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/ag-develop/interfaces"
+    }
+  ],
+  "require": {
+    "psr/log": "^3.0",
+    "coff/ticker": "dev-master",
+    "ag-develop/interfaces": "dev-feature/basic-interfaces-defined",
+    "ext-pcntl": "*",
+    "ext-posix": "*"
+  },
+  "require-dev": {
+    "monolog/monolog": "*",
+    "friendsofphp/php-cs-fixer": "dev-master"
+  }
 }

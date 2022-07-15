@@ -9,9 +9,9 @@ use Exception;
 
 class Watchdog implements WatchdogInterface
 {
-    private readonly DateTimeInterface $createdAt;
-
     protected DateTimeInterface $lastOccupied;
+
+    private readonly DateTimeInterface $createdAt;
 
     public function __construct(
         private ?int $maxUnoccupiedTime,
@@ -39,6 +39,19 @@ class Watchdog implements WatchdogInterface
         return $this;
     }
 
+    public function shouldExit(): bool
+    {
+        if ($this->hasReachedMaxUnoccupiedTime()) {
+            return true;
+        }
+
+        if ($this->hasReachedMaxAliveTime()) {
+            return true;
+        }
+
+        return false;
+    }
+
     private function hasReachedMaxUnoccupiedTime(): bool
     {
         if ($this->maxUnoccupiedTime === null) {
@@ -55,19 +68,6 @@ class Watchdog implements WatchdogInterface
         }
 
         return $this->createdAt->getTimestamp() + $this->maxAliveTime < time();
-    }
-
-    public function shouldExit(): bool
-    {
-        if ($this->hasReachedMaxUnoccupiedTime()) {
-            return true;
-        }
-
-        if ($this->hasReachedMaxAliveTime()) {
-            return true;
-        }
-
-        return false;
     }
 
     public function shouldBeTerminated(): bool
