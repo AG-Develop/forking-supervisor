@@ -50,7 +50,7 @@ class ForkSupervisor
         $this->forkManager->cleanSlots();
     }
 
-    public function run()
+    public function run(): void
     {
         $this->ticker->loop();
     }

@@ -11,7 +11,7 @@ class JobException extends Exception
         parent::__construct($message, $code, $previous);
     }
 
-    public function getReturnValue()
+    public function getReturnValue(): int
     {
         return $this->code;
     }
