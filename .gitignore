@@ -1,4 +1,4 @@
 ### Composer template
 composer.phar
 /vendor/
-
+.php-cs-fixer.cache
