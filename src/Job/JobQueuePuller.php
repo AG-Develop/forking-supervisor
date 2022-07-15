@@ -9,7 +9,6 @@ class JobQueuePuller implements JobQueuePullerInterface
     public function __construct(
         private string $jobClass,
     ) {
-
     }
 
     public function pull(): JobInterface|null

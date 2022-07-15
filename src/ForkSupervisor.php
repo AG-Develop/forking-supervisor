@@ -32,17 +32,20 @@ class ForkSupervisor
             new CallableTick(
                 Time::SECOND,
                 $this->cleanupInterval,
-                [$this, "cleanup"])
+                [$this, "cleanup"]
+            )
         );
     }
 
-    public function replenishSlots(): void {
+    public function replenishSlots(): void
+    {
         $this->logger->debug('Running replenish');
         $this->forkManager->vacateSlots();
         $this->forkManager->refillVacatedSlots();
     }
 
-    public function cleanup(): void {
+    public function cleanup(): void
+    {
         $this->logger->debug('Running cleanup');
         $this->forkManager->cleanSlots();
     }

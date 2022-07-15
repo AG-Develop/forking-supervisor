@@ -21,12 +21,10 @@ class ForkManager
         private JobQueuePullerInterface $jobQueue,
         private ?LoggerInterface $logger = null,
     ) {
-
     }
 
     public function vacateSlots(): void
     {
-
         if ($this->count() == 0) {
             return;
         }
@@ -51,20 +49,29 @@ class ForkManager
 
                     switch (true) {
                         case pcntl_wifexited($status):
-                            $message = sprintf('Process for job %s exited with status %d', $job->getJobId(),
-                                pcntl_wexitstatus($status));
+                            $message = sprintf(
+                                'Process for job %s exited with status %d',
+                                $job->getJobId(),
+                                pcntl_wexitstatus($status)
+                            );
                             $failed = pcntl_wexitstatus($status) !== 0;
                             $finished = true;
                             break;
                         case pcntl_wifsignaled($status):
-                            $message = sprintf('Process for job %s finished due to signal %d', $job->getJobId(),
-                                pcntl_wtermsig($status));
+                            $message = sprintf(
+                                'Process for job %s finished due to signal %d',
+                                $job->getJobId(),
+                                pcntl_wtermsig($status)
+                            );
                             $failed = true;
                             $finished = true;
                             break;
                         case pcntl_wifstopped($status):
-                            $message = sprintf('Process for job %s stopped after signal %d', $job->getJobId(),
-                                pcntl_wstopsig($status));
+                            $message = sprintf(
+                                'Process for job %s stopped after signal %d',
+                                $job->getJobId(),
+                                pcntl_wstopsig($status)
+                            );
                             $failed = false;
                             $finished = false;
                             break;
@@ -86,7 +93,6 @@ class ForkManager
                         $job->incrementRetries();
                         $this->refillSlotWith($job);
                     }
-
                 } catch (ForkNotFoundException $e) {
                     $this->logger?->info('Old fork process is no longer monitored - ignoring.');
                 }
@@ -128,27 +134,31 @@ class ForkManager
             $job = $fork->getJob();
 
             if ($fork->getWatchdog()->shouldBeTerminated()) {
-                $this->logger?->info(sprintf('Process for job %s exceeded its max allowed age. Sending kill signal.', $job->getJobId()));
+                $this->logger?->info(
+                    sprintf('Process for job %s exceeded its max allowed age. Sending kill signal.', $job->getJobId())
+                );
                 $this->kill($fork);
                 $this->refillSlotWith($job);
             }
         }
     }
 
-    private function kill(Fork $child): void {
+    private function kill(Fork $child): void
+    {
         posix_kill($child->getPid(), SIGKILL);
         unset($this->children[$child->getPid()]);
     }
 
-    private function add(Fork $child): void {
+    private function add(Fork $child): void
+    {
         $this->children[$child->getPid()] = $child;
     }
 
     /**
      * @throws ForkNotFoundException
      */
-    private function get(int $pid): Fork {
-
+    private function get(int $pid): Fork
+    {
         if (!isset($this->children[$pid])) {
             throw new ForkNotFoundException('Unknown fork');
         }
@@ -157,11 +167,13 @@ class ForkManager
         return $thread;
     }
 
-    private function unlink(int $pid): void {
+    private function unlink(int $pid): void
+    {
         unset($this->children[$pid]);
     }
 
-    private function count(): int {
+    private function count(): int
+    {
         return count($this->children);
     }
 }

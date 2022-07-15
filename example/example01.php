@@ -13,8 +13,9 @@ use AgDevelop\ForkingSupervisor\ForkSupervisor;
 use AgDevelop\ForkingSupervisor\Watchdog\WatchdogBuilder;
 use Monolog\Handler\StreamHandler;
 use Monolog\Level;
+use Monolog\Logger;
 
-$logger = new \Monolog\Logger('default');
+$logger = new Logger('default');
 $handler = new StreamHandler('php://stderr', Level::Debug);
 $logger->pushHandler($handler);
 

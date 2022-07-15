@@ -2,8 +2,6 @@
 
 namespace AgDevelop\ForkingSupervisor\Watchdog;
 
-use AgDevelop\ForkingSupervisor\Exception\WatchdogException;
-
 class WatchdogBuilder implements WatchdogBuilderInterface
 {
     public function __construct(

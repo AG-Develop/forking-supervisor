@@ -12,7 +12,6 @@ class Fork
         private JobInterface $job,
         private WatchdogInterface $watchdog,
     ) {
-
     }
 
     public function getJob(): JobInterface

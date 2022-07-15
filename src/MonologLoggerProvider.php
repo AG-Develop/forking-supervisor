@@ -5,6 +5,7 @@ namespace AgDevelop\ForkingSupervisor;
 use AgDevelop\Interface\Logger\LoggerProviderInterface;
 use Monolog\Handler\StreamHandler;
 use Monolog\Level;
+use Monolog\Logger;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -14,9 +15,10 @@ class MonologLoggerProvider implements LoggerProviderInterface
 {
     private LoggerInterface $logger;
 
-    public function getNewLogger(): LoggerInterface {
+    public function getNewLogger(): LoggerInterface
+    {
         $handler = new StreamHandler('php://stderr', Level::Debug);
-        $logger = new \Monolog\Logger('default');
+        $logger = new Logger('default');
         $logger->pushHandler($handler);
 
         return $logger;

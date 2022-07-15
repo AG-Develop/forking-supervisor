@@ -9,11 +9,12 @@ trait JobTrait
 {
     private Watchdog $watchdog;
     private LoggerInterface $logger;
-    private int $retries=0;
+    private int $retries = 0;
     private bool $shouldRetryOnFail = true;
     private readonly string $jobId;
 
-    public function setShouldRetryOnFail(bool $shouldRetryOnFail): self {
+    public function setShouldRetryOnFail(bool $shouldRetryOnFail): self
+    {
         $this->shouldRetryOnFail = $shouldRetryOnFail;
         return $this;
     }
@@ -23,7 +24,8 @@ trait JobTrait
         return $this->shouldRetryOnFail;
     }
 
-    public function incrementRetries(): void {
+    public function incrementRetries(): void
+    {
         $this->retries++;
     }
 

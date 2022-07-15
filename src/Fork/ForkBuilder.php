@@ -7,20 +7,20 @@ use AgDevelop\ForkingSupervisor\Exception\JobException;
 use AgDevelop\ForkingSupervisor\Job\JobInterface;
 use AgDevelop\ForkingSupervisor\Watchdog\WatchdogInterface;
 use AgDevelop\Interface\Logger\LoggerProviderInterface;
+use Exception;
 
 class ForkBuilder implements ForkBuilderInterface
 {
     public function __construct(
         private LoggerProviderInterface $loggerProvider,
     ) {
-
     }
 
     /**
      * @throws ForkFailedException
      */
-    public function build(JobInterface $job, WatchdogInterface $watchdog): Fork {
-
+    public function build(JobInterface $job, WatchdogInterface $watchdog): Fork
+    {
         $ret = pcntl_fork();
 
         switch ($ret) {
@@ -37,7 +37,7 @@ class ForkBuilder implements ForkBuilderInterface
                     $job->run();
                 } catch (JobException $e) {
                     exit($e->getReturnValue());
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     // returns 1 by default to report error
                     exit(1);
                 }

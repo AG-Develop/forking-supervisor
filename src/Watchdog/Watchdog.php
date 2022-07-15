@@ -2,29 +2,34 @@
 
 namespace AgDevelop\ForkingSupervisor\Watchdog;
 
+use DateTime;
+use DateTimeImmutable;
+use DateTimeInterface;
+use Exception;
+
 class Watchdog implements WatchdogInterface
 {
-    private readonly \DateTimeInterface $createdAt;
-    protected \DateTimeInterface $lastOccupied;
+    private readonly DateTimeInterface $createdAt;
+    protected DateTimeInterface $lastOccupied;
 
     public function __construct(
         private ?int $maxUnoccupiedTime,
         private ?int $maxAliveTime,
     ) {
-        $this->createdAt = new \DateTimeImmutable('now');
+        $this->createdAt = new DateTimeImmutable('now');
         $this->lastOccupied = clone $this->createdAt;
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
-    public function setLastOccupied(\DateTime|string $time = null): self
+    public function setLastOccupied(DateTime|string $time = null): self
     {
-        if (!$time instanceof \DateTime) {
+        if (!$time instanceof DateTime) {
             if ($time === null) {
-                $time = new \DateTimeImmutable('now');
+                $time = new DateTimeImmutable('now');
             } else {
-                $time = new \DateTimeImmutable($time);
+                $time = new DateTimeImmutable($time);
             }
         }
 
