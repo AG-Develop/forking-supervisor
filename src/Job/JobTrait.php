@@ -31,7 +31,7 @@ trait JobTrait
 
     public function incrementRetries(): void
     {
-        $this->retries++;
+        ++$this->retries;
     }
 
     public function setLogger(LoggerInterface $logger): self

@@ -27,7 +27,7 @@ class Watchdog implements WatchdogInterface
     public function setLastOccupied(DateTime|string $time = null): self
     {
         if (!$time instanceof DateTime) {
-            if ($time === null) {
+            if (null === $time) {
                 $time = new DateTimeImmutable('now');
             } else {
                 $time = new DateTimeImmutable($time);
@@ -54,7 +54,7 @@ class Watchdog implements WatchdogInterface
 
     private function hasReachedMaxUnoccupiedTime(): bool
     {
-        if ($this->maxUnoccupiedTime === null) {
+        if (null === $this->maxUnoccupiedTime) {
             return false;
         }
 
@@ -63,7 +63,7 @@ class Watchdog implements WatchdogInterface
 
     private function hasReachedMaxAliveTime(): bool
     {
-        if ($this->maxAliveTime === null) {
+        if (null === $this->maxAliveTime) {
             return false;
         }
 

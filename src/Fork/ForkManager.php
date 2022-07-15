@@ -25,7 +25,7 @@ class ForkManager
 
     public function vacateSlots(): void
     {
-        if ($this->count() == 0) {
+        if (0 == $this->count()) {
             return;
         }
 
@@ -54,7 +54,7 @@ class ForkManager
                                 $job->getJobId(),
                                 pcntl_wexitstatus($status)
                             );
-                            $failed = pcntl_wexitstatus($status) !== 0;
+                            $failed = 0 !== pcntl_wexitstatus($status);
                             $finished = true;
                             break;
                         case pcntl_wifsignaled($status):
@@ -146,7 +146,7 @@ class ForkManager
         while ($this->count() < $this->slots) {
             $job = $this->jobQueue->pull();
 
-            if ($job === null) {
+            if (null === $job) {
                 $this->logger?->info('JobQueue returned no job. Skipping further refill');
 
                 return;

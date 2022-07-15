@@ -24,7 +24,7 @@ class ForkSupervisor
             new CallableTick(
                 Time::SECOND,
                 $this->refillSlotsInterval,
-                [$this, "replenishSlots"]
+                [$this, 'replenishSlots']
             )
         );
 
@@ -32,7 +32,7 @@ class ForkSupervisor
             new CallableTick(
                 Time::SECOND,
                 $this->cleanupInterval,
-                [$this, "cleanup"]
+                [$this, 'cleanup']
             )
         );
     }

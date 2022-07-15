@@ -9,7 +9,7 @@ use Monolog\Logger;
 use Psr\Log\LoggerInterface;
 
 /**
- * Logger provider's aim is to provide separate logger instances for forked processes
+ * Logger provider's aim is to provide separate logger instances for forked processes.
  */
 class MonologLoggerProvider implements LoggerProviderInterface
 {

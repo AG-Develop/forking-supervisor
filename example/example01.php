@@ -1,6 +1,6 @@
 <?php
 
-include(__DIR__ . "/../vendor/autoload.php");
+include __DIR__.'/../vendor/autoload.php';
 
 use AgDevelop\ForkingSupervisor\Exception\JobException;
 use AgDevelop\ForkingSupervisor\Fork\ForkBuilder;
@@ -26,7 +26,7 @@ class CustomJobQueue extends JobQueuePuller
         $job = parent::pull();
 
         // simulate no job in queue
-        if (rand(0, 5) == 3) {
+        if (3 == rand(0, 5)) {
             return null;
         }
 
@@ -44,7 +44,7 @@ class ExampleJob implements JobInterface
 
     public function run(): void
     {
-        for ($i = 1; $i <= rand(1, 3); $i++) {
+        for ($i = 1; $i <= rand(1, 3); ++$i) {
             sleep(rand(5, 50));
 
             $this->getWatchdog()->setLastOccupied();
@@ -57,8 +57,7 @@ class ExampleJob implements JobInterface
             }
         }
 
-
-        if (rand(0, 3) == 1) {
+        if (1 == rand(0, 3)) {
             throw new JobException('error', 1);
         }
     }
