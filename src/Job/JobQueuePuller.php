@@ -11,7 +11,7 @@ class JobQueuePuller implements JobQueuePullerInterface
     ) {
     }
 
-    public function pull(): JobInterface|null
+    public function pull(): ?JobInterface
     {
         $job = new $this->jobClass();
         $job
