@@ -1,6 +1,6 @@
 <?php
 
-namespace AgDevelop\ForkingSupervisor\Fork;
+namespace AgDevelop\ForkingSupervisor;
 
 use AgDevelop\ForkingSupervisor\Job\JobInterface;
 use AgDevelop\ForkingSupervisor\Watchdog\WatchdogInterface;

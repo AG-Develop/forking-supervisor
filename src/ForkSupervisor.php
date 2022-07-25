@@ -2,7 +2,6 @@
 
 namespace AgDevelop\ForkingSupervisor;
 
-use AgDevelop\ForkingSupervisor\Fork\ForkManager;
 use Coff\Ticker\CallableTick;
 use Coff\Ticker\Ticker;
 use Coff\Ticker\Time;

@@ -1,11 +1,12 @@
 <?php
 
-namespace AgDevelop\ForkingSupervisor\Fork;
+namespace AgDevelop\ForkingSupervisor;
 
 use AgDevelop\ForkingSupervisor\Exception\ForkFailedException;
 use AgDevelop\ForkingSupervisor\Exception\ForkNotFoundException;
 use AgDevelop\ForkingSupervisor\Job\JobInterface;
 use AgDevelop\ForkingSupervisor\Job\JobQueuePullerInterface;
+use AgDevelop\ForkingSupervisor\Pcntl\PcntlProvider;
 use AgDevelop\ForkingSupervisor\Watchdog\WatchdogBuilderInterface;
 use Psr\Log\LoggerInterface;
 
@@ -19,6 +20,7 @@ class ForkManager
         private WatchdogBuilderInterface $watchdogBuilder,
         private ForkBuilderInterface $forkBuilder,
         private JobQueuePullerInterface $jobQueue,
+        private PcntlProvider $pcntlProvider,
         private ?LoggerInterface $logger = null,
     ) {
     }
@@ -30,7 +32,7 @@ class ForkManager
         }
 
         $status = null;
-        $pid = pcntl_wait($status, WNOHANG | WUNTRACED);
+        $pid = $this->pcntlProvider->wait($status, WNOHANG | WUNTRACED);
         switch ($pid) {
             case -1:
                 // error, to be reported
@@ -48,34 +50,34 @@ class ForkManager
                     $finished = false;
 
                     switch (true) {
-                        case pcntl_wifexited($status):
+                        case $this->pcntlProvider->wifexited($status):
                             $message = sprintf(
                                 'Process for job %s exited with status %d',
                                 $job->getJobId(),
-                                pcntl_wexitstatus($status)
+                                $wexitstatus = $this->pcntlProvider->wexitstatus($status)
                             );
-                            $failed = 0 !== pcntl_wexitstatus($status);
+                            $failed = 0 !== $wexitstatus;
                             $finished = true;
                             break;
-                        case pcntl_wifsignaled($status):
+                        case $this->pcntlProvider->wifsignaled($status):
                             $message = sprintf(
                                 'Process for job %s finished due to signal %d',
                                 $job->getJobId(),
-                                pcntl_wtermsig($status)
+                                $this->pcntlProvider->wtermsig($status)
                             );
                             $failed = true;
                             $finished = true;
                             break;
-                        case pcntl_wifstopped($status):
+                        case $this->pcntlProvider->wifstopped($status):
                             $message = sprintf(
                                 'Process for job %s stopped after signal %d',
                                 $job->getJobId(),
-                                pcntl_wstopsig($status)
+                                $this->pcntlProvider->wstopsig($status)
                             );
                             $failed = false;
                             $finished = false;
                             break;
-                        case pcntl_wifcontinued($status):
+                        case $this->pcntlProvider->wifcontinued($status):
                             $message = sprintf('Process for job %s continues', $job->getJobId());
                             $failed = false;
                             $finished = false;

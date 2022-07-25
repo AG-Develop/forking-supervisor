@@ -4,7 +4,8 @@
   "minimum-stability": "dev",
   "autoload": {
     "psr-4": {
-      "AgDevelop\\ForkingSupervisor\\": "src/"
+      "AgDevelop\\ForkingSupervisor\\": "src/",
+      "AgDevelop\\ForkingSupervisor\\Test\\": "test/"
     }
   },
   "repositories": [
@@ -22,6 +23,7 @@
   },
   "require-dev": {
     "monolog/monolog": "*",
-    "friendsofphp/php-cs-fixer": "dev-master"
+    "friendsofphp/php-cs-fixer": "dev-master",
+    "phpunit/phpunit": "10.0.x-dev"
   }
 }

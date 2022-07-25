@@ -1,6 +1,6 @@
 <?php
 
-namespace AgDevelop\ForkingSupervisor\Fork;
+namespace AgDevelop\ForkingSupervisor;
 
 use AgDevelop\ForkingSupervisor\Exception\ForkFailedException;
 use AgDevelop\ForkingSupervisor\Job\JobInterface;
