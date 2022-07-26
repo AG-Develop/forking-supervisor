@@ -3,7 +3,7 @@
 namespace AgDevelop\ForkingSupervisor\Job;
 
 use AgDevelop\ForkingSupervisor\Exception\JobException;
-use AgDevelop\ForkingSupervisor\Watchdog\Watchdog;
+use AgDevelop\ForkingSupervisor\Watchdog\WatchdogInterface;
 use Psr\Log\LoggerInterface;
 
 interface JobInterface
@@ -13,7 +13,7 @@ interface JobInterface
      */
     public function run(): void;
 
-    public function setWatchdog(Watchdog $watchdog): self;
+    public function setWatchdog(WatchdogInterface $watchdog): self;
 
     public function setShouldRetryOnFail(bool $shouldRetryOnFail): self;
 
@@ -27,5 +27,5 @@ interface JobInterface
 
     public function getJobId(): string;
 
-    public function getWatchdog(): Watchdog;
+    public function getWatchdog(): WatchdogInterface;
 }

@@ -2,12 +2,12 @@
 
 namespace AgDevelop\ForkingSupervisor\Job;
 
-use AgDevelop\ForkingSupervisor\Watchdog\Watchdog;
+use AgDevelop\ForkingSupervisor\Watchdog\WatchdogInterface;
 use Psr\Log\LoggerInterface;
 
 trait JobTrait
 {
-    private Watchdog $watchdog;
+    private WatchdogInterface $watchdog;
 
     private LoggerInterface $logger;
 
@@ -53,12 +53,12 @@ trait JobTrait
         return $this;
     }
 
-    public function getWatchdog(): Watchdog
+    public function getWatchdog(): WatchdogInterface
     {
         return $this->watchdog;
     }
 
-    public function setWatchdog(Watchdog $watchdog): self
+    public function setWatchdog(WatchdogInterface $watchdog): self
     {
         $this->watchdog = $watchdog;
 
