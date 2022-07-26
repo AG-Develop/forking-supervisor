@@ -11,13 +11,15 @@ class Watchdog implements WatchdogInterface
 {
     protected DateTimeInterface $lastOccupied;
 
-    private readonly DateTimeInterface $createdAt;
-
     public function __construct(
         private ?int $maxUnoccupiedTime,
         private ?int $maxAliveTime,
+        private ?DateTimeInterface $createdAt = null,
     ) {
-        $this->createdAt = new DateTimeImmutable('now');
+        if (null === $this->createdAt) {
+            $this->createdAt = new DateTimeImmutable('now');
+        }
+
         $this->lastOccupied = clone $this->createdAt;
     }
 
@@ -41,15 +43,12 @@ class Watchdog implements WatchdogInterface
 
     public function shouldExit(): bool
     {
-        if ($this->hasReachedMaxUnoccupiedTime()) {
-            return true;
-        }
+        return $this->hasReachedMaxUnoccupiedTime() || $this->hasReachedMaxAliveTime();
+    }
 
-        if ($this->hasReachedMaxAliveTime()) {
-            return true;
-        }
-
-        return false;
+    public function shouldBeTerminated(): bool
+    {
+        return $this->hasReachedMaxAliveTime();
     }
 
     private function hasReachedMaxUnoccupiedTime(): bool
@@ -68,14 +67,5 @@ class Watchdog implements WatchdogInterface
         }
 
         return $this->createdAt->getTimestamp() + $this->maxAliveTime < time();
-    }
-
-    public function shouldBeTerminated(): bool
-    {
-        if ($this->hasReachedMaxAliveTime()) {
-            return true;
-        }
-
-        return false;
     }
 }
