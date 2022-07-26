@@ -5,6 +5,7 @@ namespace AgDevelop\ForkingSupervisor;
 use AgDevelop\ForkingSupervisor\Exception\ForkFailedException;
 use AgDevelop\ForkingSupervisor\Exception\JobException;
 use AgDevelop\ForkingSupervisor\Job\JobInterface;
+use AgDevelop\ForkingSupervisor\Pcntl\PcntlProvider;
 use AgDevelop\ForkingSupervisor\Watchdog\WatchdogInterface;
 use AgDevelop\Interface\Logger\LoggerProviderInterface;
 use Exception;
@@ -12,6 +13,7 @@ use Exception;
 class ForkBuilder implements ForkBuilderInterface
 {
     public function __construct(
+        private PcntlProvider $pcntlProvider,
         private LoggerProviderInterface $loggerProvider,
     ) {
     }
@@ -21,7 +23,7 @@ class ForkBuilder implements ForkBuilderInterface
      */
     public function build(JobInterface $job, WatchdogInterface $watchdog): Fork
     {
-        $ret = pcntl_fork();
+        $ret = $this->pcntlProvider->fork();
 
         switch ($ret) {
             case -1:
