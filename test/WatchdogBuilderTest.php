@@ -13,8 +13,6 @@ class SampleWatchdog extends Watchdog
 
 class WatchdogBuilderTest extends TestCase
 {
-
-
     public function testBuild()
     {
         $builder = new WatchdogBuilder(10, 10, SampleWatchdog::class);

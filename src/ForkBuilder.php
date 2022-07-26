@@ -37,18 +37,23 @@ class ForkBuilder implements ForkBuilderInterface
                     $job->setLogger($this->loggerProvider->getNewLogger());
 
                     $job->run();
+
+                    // exit anyway to prevent running parent's code
+                    $this->exit(0);
                 } catch (JobException $e) {
-                    exit($e->getReturnValue());
+                    $this->exit($e->getReturnValue());
                 } catch (Exception $e) {
                     // returns 1 by default to report error
-                    exit(1);
+                    $this->exit(1);
                 }
-
-                // exit anyway to prevent running parent's code
-                exit(0);
             default:
                 // we're parent process
                 return new Fork($ret, $job, $watchdog);
         }
+    }
+
+    public function exit(int $result): void
+    {
+        exit($result);
     }
 }
