@@ -3,13 +3,14 @@
 include __DIR__.'/../vendor/autoload.php';
 
 use AgDevelop\ForkingSupervisor\Exception\JobException;
-use AgDevelop\ForkingSupervisor\Fork\ForkBuilder;
-use AgDevelop\ForkingSupervisor\Fork\ForkManager;
+use AgDevelop\ForkingSupervisor\ForkBuilder;
+use AgDevelop\ForkingSupervisor\ForkManager;
 use AgDevelop\ForkingSupervisor\ForkSupervisor;
 use AgDevelop\ForkingSupervisor\Job\JobInterface;
 use AgDevelop\ForkingSupervisor\Job\JobQueuePuller;
 use AgDevelop\ForkingSupervisor\Job\JobTrait;
 use AgDevelop\ForkingSupervisor\MonologLoggerProvider;
+use AgDevelop\ForkingSupervisor\Pcntl\PcntlProvider;
 use AgDevelop\ForkingSupervisor\Watchdog\WatchdogBuilder;
 use Monolog\Handler\StreamHandler;
 use Monolog\Level;
@@ -63,14 +64,17 @@ class ExampleJob implements JobInterface
     }
 }
 
+$pcntl = new PcntlProvider();
+
 $manager = new ForkManager(
     20,
     new WatchdogBuilder(
         maxUnoccupiedTime: 30 * 1,
         maxAliveTime: 60,
     ),
-    new ForkBuilder(new MonologLoggerProvider()),
+    new ForkBuilder($pcntl, new MonologLoggerProvider()),
     new CustomJobQueue(ExampleJob::class),
+    $pcntl,
     $logger,
 );
 
