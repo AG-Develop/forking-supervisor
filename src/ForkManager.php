@@ -54,7 +54,6 @@ class ForkManager
 
                     switch (true) {
                         case $this->pcntlProvider->wifexited($status):
-                            echo 'exited' . PHP_EOL;
                             $message = sprintf(
                                 'Process for job %s exited with status %d',
                                 $job->getJobId(),
@@ -64,7 +63,6 @@ class ForkManager
                             $finished = true;
                             break;
                         case $this->pcntlProvider->wifsignaled($status):
-                            echo 'signaled' . PHP_EOL;
                             $message = sprintf(
                                 'Process for job %s finished due to signal %d',
                                 $job->getJobId(),
