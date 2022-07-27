@@ -25,13 +25,16 @@ class ForkManager
     ) {
     }
 
+    /**
+     * this method will call itself recurrently until it finds no children exited.
+     */
     public function vacateSlots(): void
     {
         if (0 == $this->count()) {
             return;
         }
 
-        $status = null;
+        $status = 0;
         $pid = $this->pcntlProvider->wait($status, WNOHANG | WUNTRACED);
         switch ($pid) {
             case -1:
@@ -51,6 +54,7 @@ class ForkManager
 
                     switch (true) {
                         case $this->pcntlProvider->wifexited($status):
+                            echo 'exited' . PHP_EOL;
                             $message = sprintf(
                                 'Process for job %s exited with status %d',
                                 $job->getJobId(),
@@ -60,6 +64,7 @@ class ForkManager
                             $finished = true;
                             break;
                         case $this->pcntlProvider->wifsignaled($status):
+                            echo 'signaled' . PHP_EOL;
                             $message = sprintf(
                                 'Process for job %s finished due to signal %d',
                                 $job->getJobId(),
@@ -104,7 +109,7 @@ class ForkManager
         }
     }
 
-    private function count(): int
+    protected function count(): int
     {
         return count($this->children);
     }
@@ -112,7 +117,7 @@ class ForkManager
     /**
      * @throws ForkNotFoundException
      */
-    private function get(int $pid): Fork
+    protected function get(int $pid): Fork
     {
         if (!isset($this->children[$pid])) {
             throw new ForkNotFoundException('Unknown fork');
@@ -123,7 +128,7 @@ class ForkManager
         return $thread;
     }
 
-    private function unlink(int $pid): void
+    protected function unlink(int $pid): void
     {
         unset($this->children[$pid]);
     }
@@ -163,9 +168,8 @@ class ForkManager
         $now = time();
 
         foreach ($this->children as $fork) {
-            $job = $fork->getJob();
-
             if ($fork->getWatchdog()->shouldBeTerminated()) {
+                $job = $fork->getJob();
                 $this->logger?->info(
                     sprintf('Process for job %s exceeded its max allowed age. Sending kill signal.', $job->getJobId())
                 );
@@ -175,7 +179,7 @@ class ForkManager
         }
     }
 
-    private function kill(Fork $child): void
+    protected function kill(Fork $child): void
     {
         posix_kill($child->getPid(), SIGKILL);
         unset($this->children[$child->getPid()]);

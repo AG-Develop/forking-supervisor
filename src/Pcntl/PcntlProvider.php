@@ -44,7 +44,7 @@ class PcntlProvider
         return pcntl_wtermsig($status);
     }
 
-    public function wifcontinued($status): int|false
+    public function wifcontinued($status): bool
     {
         return pcntl_wifcontinued($status);
     }
