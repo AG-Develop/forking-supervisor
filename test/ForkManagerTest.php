@@ -256,11 +256,58 @@ class ForkManagerTest extends TestCase
         $manager->vacateSlots();
     }
 
-    public function testRefillSlotWith()
+    public function refillVacatedSlotsProvider(): array
     {
+        return [
+            [10, 3, 5],
+            [10, 3, 50],
+        ];
     }
 
-    public function testRefillVacatedSlots()
+    /** @dataProvider refillVacatedSlotsProvider */
+    public function testRefillVacatedSlots(int $slots, int $jobsInProgress, int $jobsInQueue): void
     {
+        $freeSlots = $slots - $jobsInProgress;
+        $jobsToFork = min($jobsInQueue, $freeSlots);
+
+        $job = $this->createMock(Job::class);
+        $forkBuilder = $this->createMock(ForkBuilder::class);
+        $watchdogBuilder = $this->createMock(WatchdogBuilder::class);
+        $jobQueue = $this->createMock(JobQueuePullerInterface::class);
+
+        $jobs = [];
+        for($i=1;$i<=$jobsToFork; $i++) {
+            $jobs[] = $job;
+        }
+        $jobs[] = null;
+
+        $jobQueue->expects($this->exactly($jobsToFork + ($jobsInQueue > $freeSlots ? 0 : 1)))->method('pull')->willReturnOnConsecutiveCalls(...$jobs);
+
+        $pcntl = $this->createMock(PcntlProvider::class);
+        $logger = $this->createMock(LoggerInterface::class);
+
+
+        $manager = $this->getMockBuilder(ForkManager::class)
+            ->onlyMethods(['refillSlotWith','count'])
+            ->setConstructorArgs([
+                $slots,
+                $watchdogBuilder,
+                $forkBuilder,
+                $jobQueue,
+                $pcntl,
+                $logger,
+            ])
+            ->getMock();
+
+        $manager->expects($this->exactly($jobsToFork))->method('refillSlotWith')->with($job);
+
+        $returnValues = [];
+        for ($i=$jobsInProgress;$i<=$slots;$i++) {
+            $returnValues[] = $i;
+        }
+
+        $manager->expects($this->exactly($jobsToFork + 1 ))->method('count')->willReturnOnConsecutiveCalls(...$returnValues);
+
+        $manager->refillVacatedSlots();
     }
 }
