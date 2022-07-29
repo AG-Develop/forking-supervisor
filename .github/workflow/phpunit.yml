@@ -1,0 +1,36 @@
+name: PHPUnit
+
+on:
+  pull_request:
+
+jobs:
+  phpunit:
+    name: PHPUnit
+    runs-on: 'ubuntu-latest'
+    strategy:
+      fail-fast: false
+      matrix:
+        # Set N number of parallel jobs you want to run tests on.
+        # Use higher number if you have slow tests to split them on more parallel jobs.
+        # Remember to update ci_node_index below to 0..N-1
+        ci_node_total: [ 1 ]
+        # set N-1 indexes for parallel jobs
+        # When you run 2 parallel jobs then first job will have index 0, the second job will have index 1 etc
+        ci_node_index: [ 0 ]
+
+    steps:
+      -   uses: actions/checkout@v2
+
+      -   name: Setup PHP
+          uses: shivammathur/setup-php@v2
+          with:
+            php-version: '8.1'
+            extensions: pcntl
+            tools: composer:v2
+            coverage: none
+
+      -   name: Run composer install
+          run: composer install -n --prefer-dist
+
+      -   name: Run PHPUnit
+          run: ./vendor/bin/phpunit
