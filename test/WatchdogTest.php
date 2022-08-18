@@ -18,8 +18,13 @@ class WatchdogTest extends TestCase
     }
 
     /** @dataProvider dataProvider */
-    public function testShould(\DateTimeInterface $createdAt, \DateTimeInterface $lastOccupied,
-        int $maxAlive, int $maxUnocuppied, bool $shouldBeTerminated, bool $shouldExit): void
+    public function testShould(
+        \DateTimeInterface $createdAt,
+        \DateTimeInterface $lastOccupied,
+        int $maxAlive,
+        int $maxUnocuppied,
+        bool $shouldBeTerminated,
+        bool $shouldExit): void
     {
         $watchdog = new Watchdog(
             maxUnoccupiedTime: $maxUnocuppied,
