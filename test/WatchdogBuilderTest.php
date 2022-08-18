@@ -8,12 +8,11 @@ use PHPUnit\Framework\TestCase;
 
 class SampleWatchdog extends Watchdog
 {
-
 }
 
 class WatchdogBuilderTest extends TestCase
 {
-    public function testBuild()
+    public function testBuild(): void
     {
         $builder = new WatchdogBuilder(10, 10, SampleWatchdog::class);
 

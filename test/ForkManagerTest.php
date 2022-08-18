@@ -15,8 +15,7 @@ use Psr\Log\LoggerInterface;
 
 class ForkManagerTest extends TestCase
 {
-
-    public function testCleanSlots()
+    public function testCleanSlots(): void
     {
         $fork = $this->createMock(Fork::class);
         $watchdog = $this->createMock(Watchdog::class);
@@ -33,7 +32,7 @@ class ForkManagerTest extends TestCase
         $fork->expects($this->once())->method('getJob')->willReturn($job);
 
         $manager = $this->getMockBuilder(ForkManager::class)
-            ->onlyMethods(['kill','refillSlotWith'])
+            ->onlyMethods(['kill', 'refillSlotWith'])
             ->setConstructorArgs([
                 1,
                 $watchdogBuilder,
@@ -51,13 +50,13 @@ class ForkManagerTest extends TestCase
         $reflection_property = $reflection->getProperty('children');
         $reflection_property->setAccessible(true);
         $reflection_property->setValue($manager, [
-            $fork
+            $fork,
         ]);
 
         $manager->cleanSlots();
     }
 
-    public function testVacateSlotsWillFail()
+    public function testVacateSlotsWillFail(): void
     {
         $forkBuilder = $this->createMock(ForkBuilder::class);
         $watchdogBuilder = $this->createMock(WatchdogBuilder::class);
@@ -85,7 +84,7 @@ class ForkManagerTest extends TestCase
         $manager->vacateSlots();
     }
 
-    public function testVacateSlotsWithNoChildrenExited()
+    public function testVacateSlotsWithNoChildrenExited(): void
     {
         $forkBuilder = $this->createMock(ForkBuilder::class);
         $watchdogBuilder = $this->createMock(WatchdogBuilder::class);
@@ -182,12 +181,11 @@ class ForkManagerTest extends TestCase
         ];
     }
 
-
     /** @dataProvider statusProvider */
-    public function testVacateSlots($returnedTrue, $statusMethod, $statusReturned, $failed, $finished, $shouldRetry)
+    public function testVacateSlots($returnedTrue, $statusMethod, $statusReturned, $failed, $finished, $shouldRetry): void
     {
         $pid = 1;
-        $jobId = "2";
+        $jobId = '2';
         $status = 0;
         $fork = $this->createMock(Fork::class);
         $job = $this->createMock(Job::class);
@@ -204,8 +202,9 @@ class ForkManagerTest extends TestCase
             'wifcontinued',
             ];
 
-        if ($statusMethod)
+        if ($statusMethod) {
             $methods[] = $statusMethod;
+        }
 
         $pcntl = $this->createPartialMock(PcntlProvider::class, $methods);
 
@@ -213,13 +212,15 @@ class ForkManagerTest extends TestCase
         // second call returns 0 as if no other child exited
         $pcntl->expects($this->exactly(2))->method('wait')->willReturnOnConsecutiveCalls($pid, 0);
 
-        $pcntl->expects($this->once())->method($returnedTrue)->with($status)->willReturnCallback(function(&$status) {
+        $pcntl->expects($this->once())->method($returnedTrue)->with($status)->willReturnCallback(function (&$status) {
             $status = 1;
+
             return true;
         });
 
-        if ($statusMethod)
+        if ($statusMethod) {
             $pcntl->expects($this->once())->method($statusMethod)->with($status)->willReturn($statusReturned);
+        }
 
         $logger = $this->createMock(LoggerInterface::class);
 
@@ -276,7 +277,7 @@ class ForkManagerTest extends TestCase
         $jobQueue = $this->createMock(JobQueuePullerInterface::class);
 
         $jobs = [];
-        for($i=1;$i<=$jobsToFork; $i++) {
+        for ($i = 1; $i <= $jobsToFork; ++$i) {
             $jobs[] = $job;
         }
         $jobs[] = null;
@@ -286,9 +287,8 @@ class ForkManagerTest extends TestCase
         $pcntl = $this->createMock(PcntlProvider::class);
         $logger = $this->createMock(LoggerInterface::class);
 
-
         $manager = $this->getMockBuilder(ForkManager::class)
-            ->onlyMethods(['refillSlotWith','count'])
+            ->onlyMethods(['refillSlotWith', 'count'])
             ->setConstructorArgs([
                 $slots,
                 $watchdogBuilder,
@@ -302,11 +302,11 @@ class ForkManagerTest extends TestCase
         $manager->expects($this->exactly($jobsToFork))->method('refillSlotWith')->with($job);
 
         $returnValues = [];
-        for ($i=$jobsInProgress;$i<=$slots;$i++) {
+        for ($i = $jobsInProgress; $i <= $slots; ++$i) {
             $returnValues[] = $i;
         }
 
-        $manager->expects($this->exactly($jobsToFork + 1 ))->method('count')->willReturnOnConsecutiveCalls(...$returnValues);
+        $manager->expects($this->exactly($jobsToFork + 1))->method('count')->willReturnOnConsecutiveCalls(...$returnValues);
 
         $manager->refillVacatedSlots();
     }

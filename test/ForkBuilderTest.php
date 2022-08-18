@@ -14,8 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class ForkBuilderTest extends TestCase
 {
-
-    public function testBuildForkFailed()
+    public function testBuildForkFailed(): void
     {
         $loggerProviderMock = $this->createMock(LoggerProviderInterface::class);
         $job = $this->createMock(JobInterface::class);
@@ -33,7 +32,7 @@ class ForkBuilderTest extends TestCase
         $builder->build($job, $watchdog);
     }
 
-    public function testBuildSucceededParentReturnsFork()
+    public function testBuildSucceededParentReturnsFork(): void
     {
         $loggerProviderMock = $this->createMock(LoggerProviderInterface::class);
         $job = $this->createMock(JobInterface::class);
@@ -52,7 +51,7 @@ class ForkBuilderTest extends TestCase
         $this->assertInstanceOf(Fork::class, $fork);
     }
 
-    public function testBuildSucceededChildRunsJobAndExits()
+    public function testBuildSucceededChildRunsJobAndExits(): void
     {
         $loggerProviderMock = $this->createMock(LoggerProviderInterface::class);
 
@@ -75,7 +74,7 @@ class ForkBuilderTest extends TestCase
         $builder->build($job, $watchdog);
     }
 
-    public function testBuildSucceededChildRunsJobWhichFailsWithException()
+    public function testBuildSucceededChildRunsJobWhichFailsWithException(): void
     {
         $loggerProviderMock = $this->createMock(LoggerProviderInterface::class);
 
@@ -98,7 +97,7 @@ class ForkBuilderTest extends TestCase
         $builder->build($job, $watchdog);
     }
 
-    public function testBuildSucceededChildRunsJobWhichFailsWithJobException()
+    public function testBuildSucceededChildRunsJobWhichFailsWithJobException(): void
     {
         $loggerProviderMock = $this->createMock(LoggerProviderInterface::class);
 

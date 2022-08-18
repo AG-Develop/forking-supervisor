@@ -8,8 +8,7 @@ use Psr\Log\LoggerInterface;
 
 class MonologLoggerProviderTest extends TestCase
 {
-
-    public function testGetNewLogger()
+    public function testGetNewLogger(): void
     {
         $provider = new MonologLoggerProvider();
         $logger = $provider->getNewLogger();
