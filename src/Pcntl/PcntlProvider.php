@@ -2,6 +2,10 @@
 
 namespace AgDevelop\ForkingSupervisor\Pcntl;
 
+use AgDevelop\ForkingSupervisor\Exception\PcntlException;
+use AgDevelop\ForkingSupervisor\Exception\UnknownReturnCodeException;
+use AgDevelop\ForkingSupervisor\Exception\UnknownSignalException;
+
 class PcntlProvider
 {
     public function fork(): int
@@ -9,43 +13,53 @@ class PcntlProvider
         return pcntl_fork();
     }
 
-    public function wait(&$status, $flags): int
+    /**
+     * @throws PcntlException
+     * @throws UnknownReturnCodeException
+     * @throws UnknownSignalException
+     */
+    public function wait(int $flags = 0): ?PcntlWaitResult
     {
-        return pcntl_wait($status, $flags);
-    }
+        $status = 0;
+        $pid = pcntl_wait($status, $flags);
 
-    public function wifsignaled($status): bool
-    {
-        return pcntl_wifsignaled($status);
-    }
+        if (0 === $pid) {
+            return null;
+        }
 
-    public function wifexited($status): bool
-    {
-        return pcntl_wifexited($status);
-    }
+        if ($pid < 0) {
+            throw new PcntlException('pcntl_wait() returned -1');
+        }
 
-    public function wexitstatus(int $status): int|false
-    {
-        return pcntl_wexitstatus($status);
-    }
+        $hasFinished = false;
+        $returnCode = null;
+        $termSignal = null;
 
-    public function wifstopped($status): bool
-    {
-        return pcntl_wifstopped($status);
-    }
+        switch (true) {
+            case pcntl_wifexited($status):
+                $pcntlEvent = PcntlEvent::EXITED;
+                $value = pcntl_wexitstatus($status);
+                $returnCode = false !== $value ? $value
+                    : throw new UnknownReturnCodeException('Unable to read return code');
+                $hasFinished = true;
+                break;
+            case pcntl_wifsignaled($status):
+                $pcntlEvent = PcntlEvent::SIGNALED;
+                $value = pcntl_wtermsig($status);
+                $termSignal = false !== $value ? $value
+                    : throw new UnknownSignalException('Unable to determine termination signal');
+                $hasFinished = true;
+                break;
+            case pcntl_wifstopped($status):
+                $pcntlEvent = PcntlEvent::STOPPED;
+                break;
+            case pcntl_wifcontinued($status):
+                $pcntlEvent = PcntlEvent::CONTINUED;
+                break;
+            default:
+                throw new PcntlException(sprintf('Unknown pcntl event occurred (%s)', $status));
+        }
 
-    public function wstopsig(int $status): int|false
-    {
-        return pcntl_wstopsig($status);
-    }
-
-    public function wtermsig(int $status): int|false
-    {
-        return pcntl_wtermsig($status);
-    }
-
-    public function wifcontinued($status): bool
-    {
-        return pcntl_wifcontinued($status);
+        return new PcntlWaitResult($pid, $pcntlEvent, $hasFinished, $returnCode, $termSignal);
     }
 }

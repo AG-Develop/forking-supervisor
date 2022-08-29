@@ -4,8 +4,12 @@ namespace AgDevelop\ForkingSupervisor;
 
 use AgDevelop\ForkingSupervisor\Exception\ForkFailedException;
 use AgDevelop\ForkingSupervisor\Exception\ForkNotFoundException;
+use AgDevelop\ForkingSupervisor\Exception\PcntlException;
+use AgDevelop\ForkingSupervisor\Exception\UnknownReturnCodeException;
+use AgDevelop\ForkingSupervisor\Exception\UnknownSignalException;
 use AgDevelop\ForkingSupervisor\Job\JobInterface;
 use AgDevelop\ForkingSupervisor\Job\JobQueuePullerInterface;
+use AgDevelop\ForkingSupervisor\Pcntl\PcntlEvent;
 use AgDevelop\ForkingSupervisor\Pcntl\PcntlProvider;
 use AgDevelop\ForkingSupervisor\Watchdog\WatchdogBuilderInterface;
 use Psr\Log\LoggerInterface;
@@ -34,76 +38,41 @@ class ForkManager
             return;
         }
 
-        $status = 0;
-        $pid = $this->pcntlProvider->wait($status, WNOHANG | WUNTRACED);
-        switch ($pid) {
-            case -1:
-                // error, to be reported
-                $this->logger?->error('pcntl_wait() returned -1');
-                break;
-            case 0:
-                // no child exited
-                break;
-            default:
-                // child's status changed
-                try {
-                    $fork = $this->get($pid);
-                    $job = $fork->getJob();
-                    $failed = false;
-                    $finished = false;
+        try {
+            $pcntlResult = $this->pcntlProvider->wait(WNOHANG | WUNTRACED);
 
-                    switch (true) {
-                        case $this->pcntlProvider->wifexited($status):
-                            $message = sprintf(
-                                'Process for job %s exited with status %d',
-                                $job->getJobId(),
-                                $wexitstatus = $this->pcntlProvider->wexitstatus($status)
-                            );
-                            $failed = 0 !== $wexitstatus;
-                            $finished = true;
-                            break;
-                        case $this->pcntlProvider->wifsignaled($status):
-                            $message = sprintf(
-                                'Process for job %s finished due to signal %d',
-                                $job->getJobId(),
-                                $this->pcntlProvider->wtermsig($status)
-                            );
-                            $failed = true;
-                            $finished = true;
-                            break;
-                        case $this->pcntlProvider->wifstopped($status):
-                            $message = sprintf(
-                                'Process for job %s stopped after signal %d',
-                                $job->getJobId(),
-                                $this->pcntlProvider->wstopsig($status)
-                            );
-                            $failed = false;
-                            $finished = false;
-                            break;
-                        case $this->pcntlProvider->wifcontinued($status):
-                            $message = sprintf('Process for job %s continues', $job->getJobId());
-                            $failed = false;
-                            $finished = false;
-                            break;
-                    }
+            if (null === $pcntlResult) {
+                // no child exited; this condition breaks recurrence cycle
+                return;
+            }
 
-                    if ($finished) {
-                        $this->unlink($pid);
-                    }
+            if ($pcntlResult->hasFinished()) {
+                $pid = $pcntlResult->getPid();
+                $fork = $this->get($pid);
+                $job = $fork->getJob();
+                $event = $pcntlResult->getPcntlEvent();
 
-                    $this->logger?->info($message);
+                $this->unlink($pid);
 
-                    if ($failed && $job->shouldRetryOnFail()) {
-                        $this->logger?->info(sprintf('Relaunching failed job %s under fresh fork', $job->getJobId()));
-                        $job->incrementRetries();
-                        $this->refillSlotWith($job);
-                    }
-                } catch (ForkNotFoundException $e) {
-                    $this->logger?->info('Old fork process is no longer monitored - ignoring.');
+                $failed = PcntlEvent::SIGNALED || (PcntlEvent::EXITED == $event && $pcntlResult->getReturnCode() > 0);
+
+                if ($failed && $job->shouldRetryOnFail()) {
+                    $this->logger?->info(sprintf('Job failure. Relaunching failed job %s under fresh fork', $job->getJobId()));
+                    $job->incrementRetries();
+                    $this->refillSlotWith($job);
                 }
+            }
 
-                // check if any other slots are to be vacated
-                $this->vacateSlots();
+            // recurrently check if any other slots are to be vacated
+            $this->vacateSlots();
+        } catch (ForkNotFoundException $e) {
+            $this->logger?->info('Old fork process is no longer monitored - ignoring.');
+        } catch (UnknownSignalException $e) {
+            $this->logger?->error('System reported fork to be signaled to terminate but failed to determine signal');
+        } catch (UnknownReturnCodeException $e) {
+            $this->logger?->error('System reported fork exited but failed to determine return code');
+        } catch (PcntlException $e) {
+            $this->logger?->error($e->getMessage());
         }
     }
 

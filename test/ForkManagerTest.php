@@ -2,12 +2,15 @@
 
 namespace AgDevelop\ForkingSupervisor\Test;
 
+use AgDevelop\ForkingSupervisor\Exception\PcntlException;
 use AgDevelop\ForkingSupervisor\Fork;
 use AgDevelop\ForkingSupervisor\ForkBuilder;
 use AgDevelop\ForkingSupervisor\ForkManager;
 use AgDevelop\ForkingSupervisor\Job\Job;
 use AgDevelop\ForkingSupervisor\Job\JobQueuePullerInterface;
+use AgDevelop\ForkingSupervisor\Pcntl\PcntlEvent;
 use AgDevelop\ForkingSupervisor\Pcntl\PcntlProvider;
+use AgDevelop\ForkingSupervisor\Pcntl\PcntlWaitResult;
 use AgDevelop\ForkingSupervisor\Watchdog\Watchdog;
 use AgDevelop\ForkingSupervisor\Watchdog\WatchdogBuilder;
 use PHPUnit\Framework\TestCase;
@@ -62,10 +65,9 @@ class ForkManagerTest extends TestCase
         $watchdogBuilder = $this->createMock(WatchdogBuilder::class);
         $jobQueue = $this->createMock(JobQueuePullerInterface::class);
         $pcntl = $this->createPartialMock(PcntlProvider::class, ['wait']);
-        $pcntl->expects($this->once())->method('wait')->willReturn(-1);
+        $pcntl->expects($this->once())->method('wait')->will($this->throwException(new PcntlException('pcntl_wait() returned -1')));
 
         $logger = $this->createMock(LoggerInterface::class);
-        $logger->expects($this->once())->method('error')->with('pcntl_wait() returned -1');
 
         $manager = $this->getMockBuilder(ForkManager::class)
             ->onlyMethods(['count'])
@@ -90,7 +92,7 @@ class ForkManagerTest extends TestCase
         $watchdogBuilder = $this->createMock(WatchdogBuilder::class);
         $jobQueue = $this->createMock(JobQueuePullerInterface::class);
         $pcntl = $this->createPartialMock(PcntlProvider::class, ['wait']);
-        $pcntl->expects($this->once())->method('wait')->willReturn(0);
+        $pcntl->expects($this->once())->method('wait')->willReturn(null);
 
         $logger = $this->createMock(LoggerInterface::class);
 
@@ -115,74 +117,50 @@ class ForkManagerTest extends TestCase
     {
         return [
             [
-                'returnedTrue' => 'wifexited',
-                'statusMethod' => 'wexitstatus',
-                'statusReturned' => 0,
-                'failed' => false,
-                'finished' => true,
-                'shouldRetry' => true,
-            ],
-            [
-                'returnedTrue' => 'wifsignaled',
-                'statusMethod' => 'wtermsig',
-                'statusReturned' => SIGHUP,
-                'failed' => true,
-                'finished' => true,
-                'shouldRetry' => true,
-            ],
-            [
-                'returnedTrue' => 'wifsignaled',
-                'statusMethod' => 'wtermsig',
-                'statusReturned' => SIGINT,
-                'failed' => true,
-                'finished' => true,
-                'shouldRetry' => true,
-            ],
-            [
-                'returnedTrue' => 'wifsignaled',
-                'statusMethod' => 'wtermsig',
-                'statusReturned' => SIGQUIT,
-                'failed' => true,
-                'finished' => true,
-                'shouldRetry' => true,
-            ],
-            [
-                'returnedTrue' => 'wifsignaled',
-                'statusMethod' => 'wtermsig',
-                'statusReturned' => SIGTERM,
-                'failed' => true,
-                'finished' => true,
-                'shouldRetry' => true,
-            ],
-            [
-                'returnedTrue' => 'wifsignaled',
-                'statusMethod' => 'wtermsig',
-                'statusReturned' => SIGKILL,
-                'failed' => true,
-                'finished' => true,
-                'shouldRetry' => true,
-            ],
-            [
-                'returnedTrue' => 'wifstopped',
-                'statusMethod' => 'wstopsig',
-                'statusReturned' => SIGSTOP,
-                'failed' => false,
-                'finished' => false,
+                'pcntlEvent' => PcntlEvent::EXITED,
+                'hasFinished' => true,
+                'hasFailed' => false,
+                'returnCode' => 0,
+                'termSignal' => null,
                 'shouldRetry' => false,
             ],
             [
-                'returnedTrue' => 'wifcontinued',
-                'statusMethod' => null,
-                'statusReturned' => null,
-                'failed' => false,
-                'finished' => false,
+                'pcntlEvent' => PcntlEvent::EXITED,
+                'hasFinished' => true,
+                'hasFailed' => true,
+                'returnCode' => 1,
+                'termSignal' => null,
+                'shouldRetry' => true,
+            ],
+            [
+                'pcntlEvent' => PcntlEvent::SIGNALED,
+                'hasFinished' => true,
+                'hasFailed' => true,
+                'returnCode' => 0,
+                'termSignal' => SIGKILL,
+                'shouldRetry' => true,
+            ],
+            [
+                'pcntlEvent' => PcntlEvent::STOPPED,
+                'hasFinished' => false,
+                'hasFailed' => false,
+                'returnCode' => null,
+                'termSignal' => null,
+                'shouldRetry' => false,
+            ],
+            [
+                'pcntlEvent' => PcntlEvent::CONTINUED,
+                'hasFinished' => false,
+                'hasFailed' => false,
+                'returnCode' => null,
+                'termSignal' => null,
                 'shouldRetry' => false,
             ],
         ];
     }
 
     /** @dataProvider statusProvider */
-    public function testVacateSlots($returnedTrue, $statusMethod, $statusReturned, $failed, $finished, $shouldRetry): void
+    public function testVacateSlots(PcntlEvent $pcntlEvent, bool $hasFinished, bool $hasFailed, ?int $returnCode, ?int $termSignal, bool $shouldRetry): void
     {
         $pid = 1;
         $jobId = '2';
@@ -194,33 +172,17 @@ class ForkManagerTest extends TestCase
         $watchdogBuilder = $this->createMock(WatchdogBuilder::class);
         $jobQueue = $this->createMock(JobQueuePullerInterface::class);
 
-        $methods = [
-            'wait',
-            'wifexited',
-            'wifsignaled',
-            'wifstopped',
-            'wifcontinued',
-            ];
-
-        if ($statusMethod) {
-            $methods[] = $statusMethod;
-        }
-
-        $pcntl = $this->createPartialMock(PcntlProvider::class, $methods);
+        $pcntl = $this->getMockBuilder(PcntlProvider::class)
+            ->onlyMethods(['wait'])
+            ->disableArgumentCloning()
+            ->getMock();
 
         // first call returns PID of the exited child
         // second call returns 0 as if no other child exited
-        $pcntl->expects($this->exactly(2))->method('wait')->willReturnOnConsecutiveCalls($pid, 0);
-
-        $pcntl->expects($this->once())->method($returnedTrue)->with($status)->willReturnCallback(function (&$status) {
-            $status = 1;
-
-            return true;
-        });
-
-        if ($statusMethod) {
-            $pcntl->expects($this->once())->method($statusMethod)->with($status)->willReturn($statusReturned);
-        }
+        $pcntl->expects($this->exactly(2))->method('wait')->willReturnOnConsecutiveCalls(
+            new PcntlWaitResult(1, $pcntlEvent, $hasFinished, $returnCode, $termSignal),
+            null,
+        );
 
         $logger = $this->createMock(LoggerInterface::class);
 
@@ -238,15 +200,14 @@ class ForkManagerTest extends TestCase
 
         $manager->expects($this->exactly(2))->method('count')->willReturn(1);
 
-        $manager->expects($this->once())->method('get')->with($pid)->willReturn($fork);
-        $fork->expects($this->once())->method('getJob')->willReturn($job);
-        $job->expects($this->any())->method('getJobId')->willReturn($jobId);
-
-        if ($finished) {
+        if ($hasFinished) {
+            $manager->expects($this->once())->method('get')->with($pid)->willReturn($fork);
+            $fork->expects($this->once())->method('getJob')->willReturn($job);
+            $job->expects($this->any())->method('getJobId')->willReturn($jobId);
             $manager->expects($this->once())->method('unlink')->with($pid);
         }
 
-        if ($failed) {
+        if ($hasFailed) {
             $job->expects($this->once())->method('shouldRetryOnFail')->willReturn($shouldRetry);
             if ($shouldRetry) {
                 $job->expects($this->once())->method('incrementRetries');
