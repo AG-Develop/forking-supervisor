@@ -1,0 +1,24 @@
+name: PHP-CS-Fixer lint
+on: pull_request
+jobs:
+  php-cs-fixer:
+    name: PHP-CS-Fixer
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/cache@v3
+        with:
+          path: .php-cs-fixer.cache
+          key: ${{ runner.OS }}-${{ github.repository }}-phpcsfixer-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.OS }}-${{ github.repository }}-phpcsfixer-
+
+      - name: Download php-cs-fixer
+        run: curl -L https://cs.symfony.com/download/php-cs-fixer-v3.phar -o php-cs-fixer
+
+      - name: Make php-cs-fixer executable
+        run: chmod +x php-cs-fixer
+
+      - name: Check for code style
+        run: ./php-cs-fixer fix --dry-run --diff
